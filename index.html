@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFFFFF">
+<title>1초를 맞춰라</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#FFFFFF;--bg2:#F4F5F7;--bg3:#ECEEF0;
+  --blue:#3182F6;--blue-dk:#1B64DA;
+  --gold:#FF8C00;--red:#F04452;--green:#1FC47D;
+  --text:#191F28;--dim:#8B95A1;--sub:#6B7684;
+  --font:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR',sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-user-select:none;user-select:none}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;transition:opacity .35s,transform .35s;padding-top:calc(var(--safe-top)+8px);padding-bottom:calc(var(--safe-bottom)+8px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(12px)}
+
+/* 메인 */
+.main-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:400px;padding:0 20px}
+.main-label{font-size:12px;color:var(--dim);letter-spacing:1px;margin-bottom:4px}
+.main-points{font-size:clamp(32px,10vw,46px);font-weight:800;color:var(--gold);line-height:1.2}
+.main-points .unit{font-size:clamp(16px,5vw,22px);font-weight:600;margin-left:4px}
+
+/* 타이머 원형 */
+.timer-circle{position:relative;width:min(200px,50vw);height:min(200px,50vw);margin:16px 0}
+.timer-ring{width:100%;height:100%}
+.timer-bg{fill:none;stroke:var(--bg2);stroke-width:8}
+.timer-progress{fill:none;stroke:var(--blue);stroke-width:8;stroke-linecap:round;transition:stroke .2s}
+.timer-progress.over{stroke:var(--red)}
+.timer-progress.perfect{stroke:var(--green)}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-value{font-size:clamp(36px,10vw,52px);font-weight:900;font-variant-numeric:tabular-nums;color:var(--text)}
+.timer-unit{font-size:13px;color:var(--dim);margin-top:2px}
+
+/* 뱃지 */
+.badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;justify-content:center}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-best{background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.2);color:var(--gold)}
+.badge-flips{background:rgba(49,130,246,.1);border:1px solid rgba(49,130,246,.2);color:var(--blue)}
+.badge.hidden{display:none}
+
+/* 포인트 테이블 */
+.pt-table{width:100%;max-width:400px;padding:0 16px;margin-bottom:8px}
+.pt-table-inner{display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:8px 6px}
+.pt-step{flex:1;text-align:center;padding:4px 2px;border-radius:6px}
+.pt-step .s-num{font-size:9px;color:var(--dim)}
+.pt-step .s-val{font-size:11px;font-weight:700;color:var(--sub)}
+
+/* 시간 선택 */
+.time-select{display:flex;gap:6px;width:100%;max-width:400px;padding:0 16px;margin-bottom:8px}
+.time-opt{flex:1;padding:10px 4px;background:var(--bg2);border-radius:10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;touch-action:manipulation}
+.time-opt:active{transform:scale(.96)}
+.time-opt.selected{border-color:var(--blue);background:rgba(49,130,246,.05)}
+.time-opt .t-sec{font-size:14px;font-weight:800;color:var(--text)}
+.time-opt .t-multi{font-size:11px;font-weight:700;color:var(--blue);margin-top:2px}
+.time-opt.selected .t-multi{color:var(--blue)}
+
+/* 버튼 */
+.btn-area{width:100%;max-width:400px;padding:0 16px 16px;display:flex;flex-direction:column;gap:6px}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;transition:transform .08s;display:flex;align-items:center;justify-content:center;gap:7px;touch-action:manipulation}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn-main{background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;box-shadow:0 2px 12px rgba(49,130,246,.3)}
+.btn-main.no-flips{background:var(--bg3);box-shadow:none;color:var(--dim)}
+.btn-sub{background:var(--bg2);color:var(--sub);font-size:13px;padding:12px}
+.btn-gold{background:var(--bg2);color:var(--gold);border:1px solid rgba(255,140,0,.15)}
+.btn-gold:disabled{color:var(--dim);border-color:var(--bg3)}
+.btn-row{display:flex;gap:6px}
+.btn-row .btn{flex:1}
+
+/* 게임 화면 */
+#gameScreen{justify-content:center;background:var(--bg)}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:400px;padding:0 20px;gap:clamp(12px,3vh,24px)}
+.game-instruction{font-size:17px;font-weight:700;text-align:center;color:var(--text);line-height:1.5}
+.game-instruction .highlight{color:var(--blue)}
+.game-sub{font-size:13px;color:var(--dim);text-align:center}
+
+/* 탭 영역 */
+.tap-zone{width:min(260px,65vw);height:min(260px,65vw);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;touch-action:manipulation;transition:all .15s;position:relative}
+.tap-zone.ready{background:var(--bg2);border:3px dashed var(--dim)}
+.tap-zone.timing{background:linear-gradient(135deg,var(--blue),var(--blue-dk));border:3px solid var(--blue);box-shadow:0 0 40px rgba(49,130,246,.2)}
+.tap-zone.timing .tap-text{color:#fff}
+.tap-zone.timing .tap-sub{color:rgba(255,255,255,.7)}
+.tap-zone.done{border:3px solid var(--bg3);background:var(--bg2)}
+.tap-text{font-size:clamp(20px,6vw,28px);font-weight:800;color:var(--text)}
+.tap-sub{font-size:13px;color:var(--dim);margin-top:4px}
+.tap-timer{font-size:clamp(40px,12vw,60px);font-weight:900;font-variant-numeric:tabular-nums;color:#fff}
+
+/* 결과 */
+.result{text-align:center;opacity:0;transition:opacity .4s}
+.result.show{opacity:1}
+.result-time{font-size:clamp(36px,10vw,48px);font-weight:900;font-variant-numeric:tabular-nums}
+.result-time.perfect{color:var(--green)}
+.result-time.great{color:var(--blue)}
+.result-time.good{color:var(--gold)}
+.result-time.miss{color:var(--red)}
+.result-grade{font-size:20px;font-weight:800;margin-top:4px}
+.result-points{font-size:16px;color:var(--gold);font-weight:700;margin-top:4px}
+.result-detail{font-size:13px;color:var(--dim);margin-top:2px}
+.result-btns{margin-top:16px;display:flex;flex-direction:column;gap:6px;width:min(260px,70vw);margin-left:auto;margin-right:auto}
+
+/* 출금 */
+#withdrawScreen{justify-content:center;gap:20px}
+.withdraw-amount{text-align:center}
+.withdraw-amount .label{font-size:14px;color:var(--dim);margin-bottom:8px}
+.withdraw-amount .value{font-size:40px;font-weight:800;color:var(--blue)}
+.withdraw-amount .sub{font-size:13px;color:var(--dim);margin-top:4px}
+.withdraw-info{text-align:center;font-size:13px;color:var(--sub);line-height:1.6;padding:0 40px}
+.withdraw-buttons{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;padding:0 24px}
+
+/* 도움말 */
+.help-btn{position:fixed;top:calc(var(--safe-top)+56px);right:16px;z-index:50;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg2);color:var(--dim);display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.help-btn:active{transform:scale(.92)}
+.help-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:flex-end;justify-content:center}
+.help-overlay.show{opacity:1;pointer-events:auto}
+.help-sheet{width:100%;max-width:440px;background:#fff;border-radius:20px 20px 0 0;padding:0 0 calc(var(--safe-bottom)+20px);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.help-overlay.show .help-sheet{transform:translateY(0)}
+.help-handle{width:36px;height:4px;border-radius:2px;background:var(--bg3);margin:10px auto 0}
+.help-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+.help-header h2{font-size:18px;font-weight:800}
+.help-close{width:28px;height:28px;border:none;background:var(--bg2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);touch-action:manipulation}
+.help-body{padding:0 20px;max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.help-section{margin-bottom:16px}
+.help-section h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.help-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bg2)}
+.help-row:last-child{border-bottom:none}
+.help-row .h-label{font-size:13px;color:var(--sub)}
+.help-row .h-value{font-size:13px;font-weight:700}
+.help-row .h-value.green{color:var(--green)}
+.help-row .h-value.blue{color:var(--blue)}
+.help-row .h-value.gold{color:var(--gold)}
+.help-row .h-value.red{color:var(--red)}
+.help-note{font-size:12px;color:var(--dim);line-height:1.6;margin-top:4px}
+
+/* 효과 */
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);padding:12px 24px;background:#333;border:none;border-radius:12px;font-size:14px;color:#fff;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;max-width:90%;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.withdraw-success{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;z-index:250;opacity:0;pointer-events:none;transition:opacity .4s}
+.withdraw-success.show{opacity:1;pointer-events:auto}
+.withdraw-success .check{width:72px;height:72px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:32px;color:#fff}
+.withdraw-success .msg{font-size:20px;font-weight:700;margin-bottom:6px}
+.withdraw-success .detail{font-size:14px;color:var(--sub);margin-bottom:28px}
+
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(49,130,246,.3)}50%{box-shadow:0 0 0 20px rgba(49,130,246,0)}}
+.tap-zone.timing{animation:pulse 1.5s ease infinite}
+
+@keyframes popIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.result.show .result-time{animation:popIn .4s ease}
+
+@media (max-height:667px){
+  .timer-circle{width:140px;height:140px;margin:8px 0}
+  .tap-zone{width:200px;height:200px}
+  .btn{padding:11px;font-size:13px}
+  .btn-sub{padding:10px;font-size:12px}
+}
+@media (min-width:600px){.screen{max-width:440px;margin:0 auto}}
+
+/* 모바일 */
+body{-webkit-text-size-adjust:100%}
+</style>
+</head>
+<body>
+
+<!-- 메인 -->
+<div id="mainScreen" class="screen">
+  <div class="main-top">
+    <div class="main-label">내 포인트</div>
+    <div class="main-points"><span id="amountNum">0</span><span class="unit">P</span></div>
+
+    <div class="timer-circle">
+      <svg class="timer-ring" viewBox="0 0 120 120">
+        <circle class="timer-bg" cx="60" cy="60" r="52"/>
+        <circle class="timer-progress" id="timerRing" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-value" id="timerDisplay">1.000</div>
+        <div class="timer-unit">목표 시간</div>
+      </div>
+    </div>
+
+    <div class="badges">
+      <div class="badge badge-best hidden" id="bestBadge">
+        <span>🏆</span><span id="bestText">최고 0.000s</span>
+      </div>
+      <div class="badge badge-flips" id="flipsBadge">
+        <span>⏱</span><span id="flipsText">오늘 0회 남음</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 시간 선택 -->
+  <div class="time-select" id="timeSelect">
+    <div class="time-opt selected" data-time="1" data-multi="1" onclick="pickTime(this)"><div class="t-sec">1초</div><div class="t-multi">x1</div></div>
+    <div class="time-opt" data-time="2" data-multi="1.5" onclick="pickTime(this)"><div class="t-sec">2초</div><div class="t-multi">x1.5</div></div>
+    <div class="time-opt" data-time="3" data-multi="2" onclick="pickTime(this)"><div class="t-sec">3초</div><div class="t-multi">x2</div></div>
+    <div class="time-opt" data-time="5" data-multi="3" onclick="pickTime(this)"><div class="t-sec">5초</div><div class="t-multi">x3</div></div>
+    <div class="time-opt" data-time="10" data-multi="5" onclick="pickTime(this)"><div class="t-sec">10초</div><div class="t-multi">x5</div></div>
+  </div>
+
+  <div class="pt-table">
+    <div class="pt-table-inner">
+      <div class="pt-step"><div class="s-num">±0.01s</div><div class="s-val" style="color:var(--green)" id="ptPerfect">+10P</div></div>
+      <div class="pt-step"><div class="s-num">±0.05s</div><div class="s-val" style="color:var(--blue)" id="ptGreat">+5P</div></div>
+      <div class="pt-step"><div class="s-num">±0.1s</div><div class="s-val" style="color:var(--gold)" id="ptGood">+2P</div></div>
+      <div class="pt-step"><div class="s-num">±0.1s+</div><div class="s-val" id="ptMiss">+1P</div></div>
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="btn btn-main" id="btnStart" onclick="startGame()">⏱ 도전하기</button>
+    <div class="btn-row">
+      <button class="btn btn-sub" id="btnShare" onclick="doShare()">🔗 공유 +1회</button>
+      <button class="btn btn-sub" id="btnAd" onclick="watchAd()">📺 광고 +1회</button>
+    </div>
+    <button class="btn btn-gold" id="btnWithdraw" onclick="showWithdraw()">💱 토스포인트로 변환 (10P 이상)</button>
+    <button class="btn btn-sub" onclick="openLeaderboard()">🏆 랭킹 보기</button>
+  </div>
+</div>
+
+<!-- 게임 화면 -->
+<div id="gameScreen" class="screen hidden">
+  <div class="game-area">
+    <div class="game-instruction">
+      <span class="highlight">정확히 <span id="gameTarget">1</span>초</span>를 맞춰보세요
+      <span id="gameMulti" style="font-size:13px;color:var(--gold);display:block;margin-top:2px"></span>
+    </div>
+    <div class="game-sub" id="gameSub">원을 터치해서 시작하세요</div>
+
+    <div class="tap-zone ready" id="tapZone" onclick="handleTap()">
+      <div class="tap-text" id="tapText">터치해서 시작</div>
+      <div class="tap-sub" id="tapSub">START</div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-time" id="resultTime">1.000</div>
+      <div class="result-grade" id="resultGrade"></div>
+      <div class="result-points" id="resultPoints"></div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="result-btns">
+        <button class="btn btn-main" id="btnRetry" onclick="startGame()">⏱ 다시 도전!</button>
+        <button class="btn btn-sub" onclick="backToMain()">돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 출금 -->
+<div id="withdrawScreen" class="screen hidden">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+    <div class="withdraw-amount">
+      <div class="label">토스포인트로 변환</div>
+      <div class="value" id="withdrawAmount">0 P</div>
+      <div class="sub">= <span id="withdrawToss">0</span> 토스포인트</div>
+    </div>
+    <div class="withdraw-info">항아리의 포인트가 토스포인트로 변환돼요.<br>변환 후 포인트는 <strong>0P</strong>로 초기화돼요.</div>
+    <div class="withdraw-buttons">
+      <button class="btn btn-main" onclick="doWithdraw()">변환하기</button>
+      <button class="btn btn-sub" onclick="hideWithdraw()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 변환 성공 -->
+<div class="withdraw-success" id="withdrawSuccess">
+  <div class="check">✓</div>
+  <div class="msg">변환 완료!</div>
+  <div class="detail" id="withdrawSuccessDetail">0 토스포인트가 지급되었어요</div>
+  <button class="btn btn-main" style="width:200px" onclick="closeWithdrawSuccess()">확인</button>
+</div>
+
+<!-- 도움말 -->
+<button class="help-btn" onclick="toggleHelp()">?</button>
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)toggleHelp()">
+  <div class="help-sheet">
+    <div class="help-handle"></div>
+    <div class="help-header">
+      <h2>게임 방법</h2>
+      <button class="help-close" onclick="toggleHelp()">✕</button>
+    </div>
+    <div class="help-body">
+      <div class="help-section">
+        <h3>⏱ 기본 규칙</h3>
+        <div class="help-row"><span class="h-label">목표</span><span class="h-value blue">선택한 시간을 정확히 맞추기</span></div>
+        <div class="help-row"><span class="h-label">방법</span><span class="h-value">터치로 시작 → 시간 맞춰 다시 터치</span></div>
+        <div class="help-row"><span class="h-label">기본 기회</span><span class="h-value">매일 3회</span></div>
+      </div>
+      <div class="help-section">
+        <h3>⏱ 시간별 보상 배율</h3>
+        <div class="help-row"><span class="h-label">1초</span><span class="h-value">x1 (기본)</span></div>
+        <div class="help-row"><span class="h-label">2초</span><span class="h-value blue">x1.5</span></div>
+        <div class="help-row"><span class="h-label">3초</span><span class="h-value blue">x2</span></div>
+        <div class="help-row"><span class="h-label">5초</span><span class="h-value gold">x3</span></div>
+        <div class="help-row"><span class="h-label">10초</span><span class="h-value gold">x5</span></div>
+        <div class="help-note">시간이 길수록 어렵지만 보상도 커요!</div>
+      </div>
+      <div class="help-section">
+        <h3>🎯 포인트 기준 (x1 기준)</h3>
+        <div class="help-row"><span class="h-label">오차 ±0.01초 이내</span><span class="h-value green">+10P (PERFECT)</span></div>
+        <div class="help-row"><span class="h-label">오차 ±0.05초 이내</span><span class="h-value blue">+5P (GREAT)</span></div>
+        <div class="help-row"><span class="h-label">오차 ±0.1초 이내</span><span class="h-value gold">+2P (GOOD)</span></div>
+        <div class="help-row"><span class="h-label">오차 ±0.1초 초과</span><span class="h-value">+1P (MISS)</span></div>
+        <div class="help-note">배율이 적용되면 포인트가 곱해져요!</div>
+      </div>
+      <div class="help-section">
+        <h3>🔗 추가 기회</h3>
+        <div class="help-row"><span class="h-label">친구에게 공유</span><span class="h-value blue">+1회 (무제한)</span></div>
+        <div class="help-row"><span class="h-label">광고 시청</span><span class="h-value blue">+1회 (무제한)</span></div>
+      </div>
+      <div class="help-section">
+        <h3>💱 토스포인트 변환</h3>
+        <div class="help-row"><span class="h-label">최소 변환</span><span class="h-value">10P 이상</span></div>
+        <div class="help-row"><span class="h-label">변환 비율</span><span class="h-value blue">1P = 1 토스포인트</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 상태 =====
+const STATE_KEY = 'one_second_v1';
+let state = loadState();
+
+function defaultState(){
+  return {points:0, bestTime:null, bestScore:0, totalPlays:0,
+    todayPlayed:0, todayBonusShare:0, todayBonusAd:0, lastPlayDate:null, totalWithdrawn:0};
+}
+function loadState(){
+  try{const s=localStorage.getItem(STATE_KEY);if(s)return{...defaultState(),...JSON.parse(s)};}catch(e){}
+  return defaultState();
+}
+function saveState(){localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function resetDaily(){
+  if(state.lastPlayDate!==todayStr()){
+    state.todayPlayed=0;state.todayBonusShare=0;state.todayBonusAd=0;state.lastPlayDate=todayStr();saveState();
+  }
+}
+function getMaxPlays(){return 3+state.todayBonusShare+state.todayBonusAd;}
+function getRemaining(){return Math.max(0,getMaxPlays()-state.todayPlayed);}
+
+// ===== 시간 선택 =====
+let targetTime=1;
+let multiplier=1;
+
+function pickTime(el){
+  document.querySelectorAll('.time-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  targetTime=parseFloat(el.dataset.time);
+  multiplier=parseFloat(el.dataset.multi);
+
+  // 타이머 표시 업데이트
+  document.getElementById('timerDisplay').textContent=targetTime.toFixed(3);
+
+  // 포인트 테이블 업데이트
+  document.getElementById('ptPerfect').textContent=`+${Math.round(10*multiplier)}P`;
+  document.getElementById('ptGreat').textContent=`+${Math.round(5*multiplier)}P`;
+  document.getElementById('ptGood').textContent=`+${Math.round(2*multiplier)}P`;
+  document.getElementById('ptMiss').textContent=`+${Math.round(1*multiplier)}P`;
+}
+
+// ===== 포인트 계산 =====
+function calcReward(diff){
+  if(diff<=0.01)return{points:Math.round(10*multiplier),grade:'PERFECT',cls:'perfect'};
+  if(diff<=0.05)return{points:Math.round(5*multiplier),grade:'GREAT!',cls:'great'};
+  if(diff<=0.1)return{points:Math.round(2*multiplier),grade:'GOOD',cls:'good'};
+  return{points:Math.round(1*multiplier),grade:'MISS',cls:'miss'};
+}
+
+// ===== UI =====
+function updateUI(){
+  resetDaily();
+  document.getElementById('amountNum').textContent=state.points.toLocaleString();
+
+  const bestBadge=document.getElementById('bestBadge');
+  const bestText=document.getElementById('bestText');
+  if(state.bestTime!==null){
+    bestBadge.classList.remove('hidden');
+    bestText.textContent=`최고 ${state.bestTime.toFixed(3)}s`;
+  }else bestBadge.classList.add('hidden');
+
+  const remaining=getRemaining();
+  document.getElementById('flipsText').textContent=`오늘 ${remaining}회 남음`;
+
+  const btn=document.getElementById('btnStart');
+  btn.disabled=remaining<=0;
+  btn.classList.toggle('no-flips',remaining<=0);
+  btn.textContent=remaining>0?`⏱ 도전하기 (${remaining}회)`:'⏱ 오늘 기회 소진';
+
+  document.getElementById('btnWithdraw').disabled=state.points<10;
+
+  // 타이머 링 (베스트 기록 표시)
+  const ring=document.getElementById('timerRing');
+  if(state.bestTime!==null){
+    const diff=Math.abs(state.bestTime-1);
+    const pct=Math.max(0,1-diff)*100;
+    ring.style.strokeDashoffset=327-(327*pct/100);
+    const r=calcReward(diff);
+    ring.classList.remove('over','perfect');
+    if(r.cls==='perfect')ring.classList.add('perfect');
+  }
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelector('.help-btn').style.display=id==='mainScreen'?'':'none';
+}
+
+// ===== 게임 =====
+let gameState='idle'; // idle, timing
+let startTime=0;
+let timerInterval=null;
+
+function startGame(){
+  resetDaily();
+  if(getRemaining()<=0)return;
+
+  showScreen('gameScreen');
+  gameState='idle';
+
+  document.getElementById('gameTarget').textContent=targetTime;
+  document.getElementById('gameMulti').textContent=multiplier>1?`보상 x${multiplier}배!`:'';
+
+  const zone=document.getElementById('tapZone');
+  zone.className='tap-zone ready';
+  document.getElementById('tapText').textContent='터치해서 시작';
+  document.getElementById('tapSub').textContent='START';
+  document.getElementById('gameSub').textContent='원을 터치해서 시작하세요';
+  document.getElementById('result').classList.remove('show');
+
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+}
+
+function handleTap(){
+  if(gameState==='idle'){
+    // 시작
+    gameState='timing';
+    startTime=performance.now();
+
+    const zone=document.getElementById('tapZone');
+    zone.className='tap-zone timing';
+    document.getElementById('tapText').textContent='';
+    document.getElementById('tapSub').textContent='';
+    document.getElementById('gameSub').textContent=`${targetTime}초라고 느꼈을 때 다시 터치!`;
+
+    // 실시간 타이머 표시
+    timerInterval=setInterval(()=>{
+      const elapsed=(performance.now()-startTime)/1000;
+      document.getElementById('tapText').textContent=elapsed.toFixed(3);
+      document.getElementById('tapSub').textContent='초';
+    },10);
+
+  }else if(gameState==='timing'){
+    // 정지
+    const elapsed=(performance.now()-startTime)/1000;
+    gameState='idle';
+    if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+
+    const zone=document.getElementById('tapZone');
+    zone.className='tap-zone done';
+    document.getElementById('tapText').textContent=elapsed.toFixed(3);
+    document.getElementById('tapSub').textContent='초';
+
+    // 결과 계산
+    const diff=Math.abs(elapsed-targetTime);
+    const reward=calcReward(diff);
+
+    state.todayPlayed++;
+    state.totalPlays++;
+    state.points+=reward.points;
+    if(state.bestDiff===undefined||state.bestDiff===null||diff<state.bestDiff){
+      state.bestDiff=diff;
+      state.bestTime=elapsed;
+      state.bestTarget=targetTime;
+    }
+    if(state.points>state.bestScore)state.bestScore=state.points;
+    saveState();
+
+    // 결과 표시
+    showResult(elapsed,diff,reward);
+  }
+}
+
+function showResult(time,diff,reward){
+  const resultEl=document.getElementById('result');
+  document.getElementById('resultTime').textContent=time.toFixed(3)+'s';
+  document.getElementById('resultTime').className='result-time '+reward.cls;
+  document.getElementById('resultGrade').textContent=reward.grade;
+  document.getElementById('resultGrade').style.color=
+    reward.cls==='perfect'?'var(--green)':reward.cls==='great'?'var(--blue)':reward.cls==='good'?'var(--gold)':'var(--red)';
+  document.getElementById('resultPoints').textContent=`+${reward.points}P`;
+  document.getElementById('resultDetail').textContent=`오차: ${diff<0.001?'0.000':diff.toFixed(3)}초 | 현재 ${state.points}P`;
+
+  const remaining=getRemaining();
+  const btnRetry=document.getElementById('btnRetry');
+  btnRetry.style.display=remaining>0?'':'none';
+  btnRetry.textContent=`⏱ 다시 도전! (${remaining}회 남음)`;
+
+  setTimeout(()=>resultEl.classList.add('show'),200);
+}
+
+function backToMain(){showScreen('mainScreen');updateUI();}
+
+// ===== 공유 =====
+function doShare(){
+  resetDaily();
+  const msg=`나 1초 맞추기에서 ${state.bestTime?state.bestTime.toFixed(3)+'초':'도전 중'}! 너도 해봐!`;
+  if(navigator.share){
+    navigator.share({title:'1초를 맞춰라',text:msg,url:location.href}).then(()=>{
+      state.todayBonusShare++;saveState();updateUI();showToast('공유 완료! +1회 획득');
+    }).catch(()=>{});
+  }else{
+    navigator.clipboard.writeText(msg).then(()=>{
+      state.todayBonusShare++;saveState();updateUI();showToast('링크 복사됨! +1회 획득');
+    }).catch(()=>{state.todayBonusShare++;saveState();updateUI();showToast('공유 완료! +1회 획득');});
+  }
+}
+
+// ===== 광고 =====
+function watchAd(){
+  resetDaily();
+  const btn=document.getElementById('btnAd');
+  btn.disabled=true;btn.textContent='📺 광고 로딩...';
+  // 테스트: 바로 지급
+  setTimeout(()=>{
+    state.todayBonusAd++;saveState();updateUI();showToast('광고 시청 완료! +1회 획득');
+  },800);
+}
+
+// ===== 변환 =====
+function showWithdraw(){
+  if(state.points<10)return;
+  document.getElementById('withdrawAmount').textContent=state.points+' P';
+  document.getElementById('withdrawToss').textContent=state.points;
+  showScreen('withdrawScreen');
+}
+function hideWithdraw(){showScreen('mainScreen');}
+function doWithdraw(){
+  const amount=state.points;state.totalWithdrawn+=amount;state.points=0;saveState();
+  document.getElementById('withdrawSuccessDetail').textContent=amount+' 토스포인트가 지급되었어요';
+  document.getElementById('withdrawSuccess').classList.add('show');
+  showScreen('mainScreen');updateUI();
+}
+function closeWithdrawSuccess(){document.getElementById('withdrawSuccess').classList.remove('show');}
+
+// ===== 랭킹 =====
+function openLeaderboard(){
+  showToast(`🏆 최고기록 ${state.bestTime?state.bestTime.toFixed(3)+'s':'없음'} | ${state.bestScore}P`);
+}
+
+// ===== 도움말 =====
+function toggleHelp(){document.getElementById('helpOverlay').classList.toggle('show');}
+
+// ===== 유틸 =====
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// 더블탭 줌 방지
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+
+// ===== 초기화 =====
+resetDaily();
+updateUI();
+</script>
+</body>
+</html>
