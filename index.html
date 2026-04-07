@@ -383,6 +383,7 @@ function startGame(mode){
 
   const zone=document.getElementById('tapZone');
   zone.className='tap-zone ready';
+  zone.style.pointerEvents='auto';
   document.getElementById('tapText').textContent='터치';
   document.getElementById('tapText').style.opacity='1';
   document.getElementById('tapSub').textContent='START';
@@ -439,6 +440,7 @@ function handleTap(){
     // 탭 존
     const zone=document.getElementById('tapZone');
     zone.className='tap-zone done';
+    zone.style.pointerEvents='none';
     const tapText=document.getElementById('tapText');
     tapText.style.opacity='1';
     tapText.textContent=elapsed.toFixed(3);
