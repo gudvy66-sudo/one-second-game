@@ -18,7 +18,6 @@
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-user-select:none;user-select:none}
-
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;transition:opacity .35s,transform .35s;padding-top:calc(var(--safe-top)+8px);padding-bottom:calc(var(--safe-bottom)+8px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateY(12px)}
 
@@ -27,43 +26,37 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .main-label{font-size:12px;color:var(--dim);letter-spacing:1px;margin-bottom:4px}
 .main-points{font-size:clamp(32px,10vw,46px);font-weight:800;color:var(--gold);line-height:1.2}
 .main-points .unit{font-size:clamp(16px,5vw,22px);font-weight:600;margin-left:4px}
-
-/* 타이머 원형 */
-.timer-circle{position:relative;width:min(180px,45vw);height:min(180px,45vw);margin:12px 0}
+.timer-circle{position:relative;width:min(170px,42vw);height:min(170px,42vw);margin:12px 0}
 .timer-ring{width:100%;height:100%}
 .timer-bg{fill:none;stroke:var(--bg2);stroke-width:8}
-.timer-progress{fill:none;stroke:var(--blue);stroke-width:8;stroke-linecap:round;transition:stroke .3s}
+.timer-progress{fill:none;stroke:var(--blue);stroke-width:8;stroke-linecap:round}
 .timer-progress.green{stroke:var(--green)}
 .timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.timer-value{font-size:clamp(28px,8vw,40px);font-weight:900;font-variant-numeric:tabular-nums;color:var(--text)}
-.timer-unit{font-size:12px;color:var(--dim);margin-top:2px}
-
-/* 뱃지 */
+.timer-value{font-size:clamp(24px,7vw,34px);font-weight:900;color:var(--text)}
+.timer-unit{font-size:11px;color:var(--dim);margin-top:2px}
 .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;justify-content:center}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-best{background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.2);color:var(--gold)}
 .badge-flips{background:rgba(49,130,246,.1);border:1px solid rgba(49,130,246,.2);color:var(--blue)}
 .badge.hidden{display:none}
 
-/* 라운드 미리보기 */
-.rounds-preview{width:100%;max-width:400px;padding:0 16px;margin-bottom:10px}
-.rounds-inner{display:flex;gap:6px;background:var(--bg2);border-radius:12px;padding:12px 10px}
-.round-card{flex:1;text-align:center;padding:8px 4px;border-radius:8px;border:2px solid transparent}
-.round-card.current{border-color:var(--blue);background:rgba(49,130,246,.05)}
-.round-card.done{opacity:.5}
-.round-card .r-num{font-size:10px;color:var(--dim);margin-bottom:2px}
-.round-card .r-time{font-size:18px;font-weight:900;color:var(--text)}
-.round-card .r-unit{font-size:10px;color:var(--dim)}
-.round-card .r-result{font-size:10px;font-weight:700;margin-top:2px}
-.round-card .r-result.win{color:var(--green)}
-.round-card .r-result.lose{color:var(--red)}
-
 /* 포인트 테이블 */
 .pt-table{width:100%;max-width:400px;padding:0 16px;margin-bottom:8px}
 .pt-table-inner{display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:8px 6px}
-.pt-step{flex:1;text-align:center;padding:4px 2px;border-radius:6px}
+.pt-step{flex:1;text-align:center;padding:4px 2px}
 .pt-step .s-num{font-size:9px;color:var(--dim)}
 .pt-step .s-val{font-size:11px;font-weight:700;color:var(--sub)}
+
+/* 모드 선택 카드 */
+.mode-cards{width:100%;max-width:400px;padding:0 16px;margin-bottom:10px;display:flex;gap:8px}
+.mode-card{flex:1;background:var(--bg2);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;touch-action:manipulation}
+.mode-card:active{transform:scale(.97)}
+.mode-card .mc-time{font-size:28px;font-weight:900;color:var(--text)}
+.mode-card .mc-label{font-size:12px;color:var(--dim);margin-top:2px}
+.mode-card .mc-cost{font-size:11px;font-weight:700;color:var(--blue);margin-top:4px;background:rgba(49,130,246,.08);padding:2px 8px;border-radius:10px;display:inline-block}
+.mode-card .mc-reward{font-size:11px;font-weight:700;color:var(--gold);margin-top:4px}
+.mode-card.hard .mc-time{color:var(--gold)}
+.mode-card.hard .mc-cost{color:var(--gold);background:rgba(255,140,0,.08)}
 
 /* 버튼 */
 .btn-area{width:100%;max-width:400px;padding:0 16px 16px;display:flex;flex-direction:column;gap:6px}
@@ -72,48 +65,44 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .btn:disabled{opacity:.4;cursor:default;transform:none}
 .btn-main{background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;box-shadow:0 2px 12px rgba(49,130,246,.3)}
 .btn-main.no-flips{background:var(--bg3);box-shadow:none;color:var(--dim)}
+.btn-gold-main{background:linear-gradient(135deg,var(--gold),#E67A00);color:#fff;box-shadow:0 2px 12px rgba(255,140,0,.3)}
 .btn-sub{background:var(--bg2);color:var(--sub);font-size:13px;padding:12px}
-.btn-gold{background:var(--bg2);color:var(--gold);border:1px solid rgba(255,140,0,.15)}
-.btn-gold:disabled{color:var(--dim);border-color:var(--bg3)}
+.btn-withdraw{background:var(--bg2);color:var(--gold);border:1px solid rgba(255,140,0,.15)}
+.btn-withdraw:disabled{color:var(--dim);border-color:var(--bg3)}
 .btn-row{display:flex;gap:6px}
 .btn-row .btn{flex:1}
 
 /* 게임 화면 */
 #gameScreen{justify-content:center;background:var(--bg)}
-.game-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:400px;padding:0 20px;gap:clamp(10px,2.5vh,20px)}
-.game-instruction{font-size:17px;font-weight:700;text-align:center;color:var(--text);line-height:1.5}
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:400px;padding:0 20px;gap:clamp(12px,3vh,24px)}
+.game-instruction{font-size:20px;font-weight:800;text-align:center;color:var(--text);line-height:1.4}
 .game-instruction .highlight{color:var(--blue)}
-.game-round-info{font-size:13px;color:var(--dim);font-weight:600}
+.game-instruction .highlight.gold{color:var(--gold)}
 .game-sub{font-size:13px;color:var(--dim);text-align:center}
+.game-hint{font-size:12px;color:var(--gold);text-align:center;font-weight:600}
 
 /* 탭 영역 */
 .tap-zone{width:min(240px,60vw);height:min(240px,60vw);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;touch-action:manipulation;transition:background .15s,border .15s;position:relative}
 .tap-zone.ready{background:var(--bg2);border:3px dashed var(--dim)}
 .tap-zone.timing{background:linear-gradient(135deg,var(--blue),var(--blue-dk));border:3px solid var(--blue)}
-.tap-zone.timing .tap-text{color:#fff;transition:opacity .8s}
+.tap-zone.timing.gold-mode{background:linear-gradient(135deg,var(--gold),#E67A00);border-color:var(--gold)}
+.tap-zone.timing .tap-text{color:#fff}
 .tap-zone.timing .tap-sub{color:rgba(255,255,255,.7)}
 .tap-zone.done{border:3px solid var(--bg3);background:var(--bg2)}
-.tap-text{font-size:clamp(32px,9vw,48px);font-weight:900;color:var(--text);font-variant-numeric:tabular-nums}
+.tap-text{font-size:clamp(32px,9vw,48px);font-weight:900;color:var(--text);font-variant-numeric:tabular-nums;transition:opacity .3s}
 .tap-sub{font-size:13px;color:var(--dim);margin-top:4px}
 
-/* 라운드 결과 (게임 중) */
-.round-result{text-align:center;opacity:0;transition:opacity .3s}
-.round-result.show{opacity:1}
-.round-result .rr-time{font-size:28px;font-weight:900;font-variant-numeric:tabular-nums}
-.round-result .rr-grade{font-size:16px;font-weight:800;margin-top:2px}
-.round-result .rr-points{font-size:14px;color:var(--gold);font-weight:700;margin-top:2px}
-
-/* 최종 결과 */
-.final-result{text-align:center;opacity:0;transition:opacity .4s}
-.final-result.show{opacity:1}
-.final-result .fr-title{font-size:22px;font-weight:900;margin-bottom:8px}
-.final-result .fr-total{font-size:40px;font-weight:900;color:var(--gold)}
-.final-result .fr-detail{font-size:13px;color:var(--dim);margin-top:4px}
-.final-result .fr-rounds{display:flex;gap:8px;justify-content:center;margin:16px 0}
-.final-result .fr-round{background:var(--bg2);border-radius:10px;padding:10px 14px;text-align:center}
-.final-result .fr-round .frr-target{font-size:11px;color:var(--dim)}
-.final-result .fr-round .frr-time{font-size:16px;font-weight:800}
-.final-result .fr-round .frr-grade{font-size:11px;font-weight:700;margin-top:2px}
+/* 결과 */
+.result{text-align:center;opacity:0;transition:opacity .4s}
+.result.show{opacity:1}
+.result-time{font-size:clamp(36px,10vw,48px);font-weight:900;font-variant-numeric:tabular-nums}
+.result-time.perfect{color:var(--green)}
+.result-time.great{color:var(--blue)}
+.result-time.good{color:var(--gold)}
+.result-time.miss{color:var(--red)}
+.result-grade{font-size:22px;font-weight:800;margin-top:4px}
+.result-points{font-size:18px;color:var(--gold);font-weight:700;margin-top:4px}
+.result-detail{font-size:13px;color:var(--dim);margin-top:2px}
 .result-btns{margin-top:16px;display:flex;flex-direction:column;gap:6px;width:min(260px,70vw);margin-left:auto;margin-right:auto}
 
 /* 출금 */
@@ -149,7 +138,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .help-row .h-value.red{color:var(--red)}
 .help-note{font-size:12px;color:var(--dim);line-height:1.6;margin-top:4px}
 
-/* 효과 */
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);padding:12px 24px;background:#333;border:none;border-radius:12px;font-size:14px;color:#fff;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;max-width:90%;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .withdraw-success{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;z-index:250;opacity:0;pointer-events:none;transition:opacity .4s}
@@ -159,18 +147,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .withdraw-success .detail{font-size:14px;color:var(--sub);margin-bottom:28px}
 
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(49,130,246,.3)}50%{box-shadow:0 0 0 20px rgba(49,130,246,0)}}
+@keyframes pulseGold{0%,100%{box-shadow:0 0 0 0 rgba(255,140,0,.3)}50%{box-shadow:0 0 0 20px rgba(255,140,0,0)}}
 .tap-zone.timing{animation:pulse 1.5s ease infinite}
+.tap-zone.timing.gold-mode{animation:pulseGold 1.5s ease infinite}
 @keyframes popIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.result.show .result-time{animation:popIn .4s ease}
 
-@media (max-height:667px){
-  .timer-circle{width:130px;height:130px;margin:6px 0}
-  .tap-zone{width:190px;height:190px}
-  .btn{padding:11px;font-size:13px}
-  .btn-sub{padding:10px;font-size:12px}
-  .rounds-inner{padding:8px 6px}
-  .round-card .r-time{font-size:15px}
-}
-@media (min-width:600px){.screen{max-width:440px;margin:0 auto}}
+@media(max-height:667px){.timer-circle{width:130px;height:130px;margin:6px 0}.tap-zone{width:190px;height:190px}.btn{padding:11px;font-size:13px}.btn-sub{padding:10px;font-size:12px}.mode-card{padding:10px 8px}.mode-card .mc-time{font-size:22px}}
+@media(min-width:600px){.screen{max-width:440px;margin:0 auto}}
 body{-webkit-text-size-adjust:100%}
 </style>
 </head>
@@ -181,49 +165,53 @@ body{-webkit-text-size-adjust:100%}
   <div class="main-top">
     <div class="main-label">내 포인트</div>
     <div class="main-points"><span id="amountNum">0</span><span class="unit">P</span></div>
-
     <div class="timer-circle">
       <svg class="timer-ring" viewBox="0 0 120 120">
         <circle class="timer-bg" cx="60" cy="60" r="52"/>
         <circle class="timer-progress" id="timerRing" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/>
       </svg>
       <div class="timer-center">
-        <div class="timer-value" id="timerDisplay">3라운드</div>
-        <div class="timer-unit">차감 도전</div>
+        <div class="timer-value" id="timerDisplay">타이머</div>
+        <div class="timer-unit">맞추기</div>
       </div>
     </div>
-
     <div class="badges">
-      <div class="badge badge-best hidden" id="bestBadge">
-        <span>🏆</span><span id="bestText">최고 0P</span>
-      </div>
-      <div class="badge badge-flips" id="flipsBadge">
-        <span>⏱</span><span id="flipsText">오늘 0회 남음</span>
-      </div>
+      <div class="badge badge-best hidden" id="bestBadge"><span>🏆</span><span id="bestText">최고 0P</span></div>
+      <div class="badge badge-flips" id="flipsBadge"><span>⏱</span><span id="flipsText">오늘 0회 남음</span></div>
     </div>
   </div>
 
-  <!-- 라운드 미리보기 -->
-  <div class="rounds-preview" id="roundsPreview">
-    <div class="rounds-inner" id="roundsInner"></div>
+  <!-- 모드 선택 -->
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startGame('normal')">
+      <div class="mc-time">5.0초</div>
+      <div class="mc-label">기본 모드</div>
+      <div class="mc-cost">1회 차감</div>
+      <div class="mc-reward">최대 +10P</div>
+    </div>
+    <div class="mode-card hard" onclick="startGame('hard')">
+      <div class="mc-time">7.7초</div>
+      <div class="mc-label">도전 모드</div>
+      <div class="mc-cost">3회 차감</div>
+      <div class="mc-reward">최대 +30P</div>
+    </div>
   </div>
 
   <div class="pt-table">
     <div class="pt-table-inner">
-      <div class="pt-step"><div class="s-num">±0.01s</div><div class="s-val" style="color:var(--green)">+10P</div></div>
-      <div class="pt-step"><div class="s-num">±0.05s</div><div class="s-val" style="color:var(--blue)">+5P</div></div>
-      <div class="pt-step"><div class="s-num">±0.1s</div><div class="s-val" style="color:var(--gold)">+2P</div></div>
-      <div class="pt-step"><div class="s-num">±0.1s+</div><div class="s-val">+1P</div></div>
+      <div class="pt-step"><div class="s-num">±0.01s</div><div class="s-val" style="color:var(--green)">PERFECT</div></div>
+      <div class="pt-step"><div class="s-num">±0.05s</div><div class="s-val" style="color:var(--blue)">GREAT</div></div>
+      <div class="pt-step"><div class="s-num">±0.1s</div><div class="s-val" style="color:var(--gold)">GOOD</div></div>
+      <div class="pt-step"><div class="s-num">±0.1s+</div><div class="s-val">MISS</div></div>
     </div>
   </div>
 
   <div class="btn-area">
-    <button class="btn btn-main" id="btnStart" onclick="startGame()">⏱ 3라운드 도전</button>
     <div class="btn-row">
       <button class="btn btn-sub" id="btnShare" onclick="doShare()">🔗 공유 +1회</button>
       <button class="btn btn-sub" id="btnAd" onclick="watchAd()">📺 광고 +1회</button>
     </div>
-    <button class="btn btn-gold" id="btnWithdraw" onclick="showWithdraw()">💱 토스포인트로 변환 (10P 이상)</button>
+    <button class="btn btn-withdraw" id="btnWithdraw" onclick="showWithdraw()">💱 토스포인트로 변환 (10P 이상)</button>
     <button class="btn btn-sub" onclick="openLeaderboard()">🏆 랭킹 보기</button>
   </div>
 </div>
@@ -231,10 +219,10 @@ body{-webkit-text-size-adjust:100%}
 <!-- 게임 화면 -->
 <div id="gameScreen" class="screen hidden">
   <div class="game-area">
-    <div class="game-round-info" id="gameRoundInfo">라운드 1/3</div>
-    <div class="game-instruction">
-      <span class="highlight">정확히 <span id="gameTarget">5.0</span>초</span>를 맞춰라
+    <div class="game-instruction" id="gameInstruction">
+      정확히 <span class="highlight" id="gameHighlight">5.0초</span>를 맞춰라
     </div>
+    <div class="game-hint" id="gameHint"></div>
     <div class="game-sub" id="gameSub">원을 터치해서 시작</div>
 
     <div class="tap-zone ready" id="tapZone" onclick="handleTap()">
@@ -242,21 +230,14 @@ body{-webkit-text-size-adjust:100%}
       <div class="tap-sub" id="tapSub">START</div>
     </div>
 
-    <!-- 라운드 결과 -->
-    <div class="round-result" id="roundResult">
-      <div class="rr-time" id="rrTime"></div>
-      <div class="rr-grade" id="rrGrade"></div>
-      <div class="rr-points" id="rrPoints"></div>
-    </div>
-
-    <!-- 최종 결과 -->
-    <div class="final-result" id="finalResult">
-      <div class="fr-title">3라운드 완료!</div>
-      <div class="fr-total" id="frTotal">+0P</div>
-      <div class="fr-detail" id="frDetail"></div>
-      <div class="fr-rounds" id="frRounds"></div>
+    <div class="result" id="result">
+      <div class="result-time" id="resultTime">5.000</div>
+      <div class="result-grade" id="resultGrade"></div>
+      <div class="result-points" id="resultPoints"></div>
+      <div class="result-detail" id="resultDetail"></div>
       <div class="result-btns">
-        <button class="btn btn-main" id="btnRetry" onclick="startGame()">⏱ 다시 도전!</button>
+        <button class="btn btn-main" id="btnRetryNormal" onclick="startGame('normal')">⏱ 5초 다시 (1회)</button>
+        <button class="btn btn-gold-main" id="btnRetryHard" onclick="startGame('hard')">🔥 7.7초 도전 (3회)</button>
         <button class="btn btn-sub" onclick="backToMain()">돌아가기</button>
       </div>
     </div>
@@ -279,7 +260,6 @@ body{-webkit-text-size-adjust:100%}
   </div>
 </div>
 
-<!-- 변환 성공 -->
 <div class="withdraw-success" id="withdrawSuccess">
   <div class="check">✓</div>
   <div class="msg">변환 완료!</div>
@@ -287,40 +267,40 @@ body{-webkit-text-size-adjust:100%}
   <button class="btn btn-main" style="width:200px" onclick="closeWithdrawSuccess()">확인</button>
 </div>
 
-<!-- 도움말 -->
 <button class="help-btn" onclick="toggleHelp()">?</button>
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)toggleHelp()">
   <div class="help-sheet">
     <div class="help-handle"></div>
-    <div class="help-header">
-      <h2>게임 방법</h2>
-      <button class="help-close" onclick="toggleHelp()">✕</button>
-    </div>
+    <div class="help-header"><h2>게임 방법</h2><button class="help-close" onclick="toggleHelp()">✕</button></div>
     <div class="help-body">
       <div class="help-section">
-        <h3>⏱ 기본 규칙</h3>
-        <div class="help-row"><span class="h-label">게임 방식</span><span class="h-value blue">3라운드 차감 도전</span></div>
-        <div class="help-row"><span class="h-label">매 라운드</span><span class="h-value">랜덤 목표 시간 (3~10초)</span></div>
-        <div class="help-row"><span class="h-label">핵심</span><span class="h-value gold">2.5초 전부터 타이머가 사라짐!</span></div>
-        <div class="help-row"><span class="h-label">기본 기회</span><span class="h-value">매일 3회 (1회 = 3라운드)</span></div>
+        <h3>⏱ 두 가지 모드</h3>
+        <div class="help-row"><span class="h-label">기본 (5.0초)</span><span class="h-value blue">1회 차감 | 최대 10P</span></div>
+        <div class="help-row"><span class="h-label">도전 (7.7초)</span><span class="h-value gold">3회 차감 | 최대 30P</span></div>
+        <div class="help-note">도전 모드는 시간이 길어 어렵지만 보상이 3배!</div>
       </div>
       <div class="help-section">
-        <h3>🎯 포인트 기준 (라운드당)</h3>
-        <div class="help-row"><span class="h-label">오차 ±0.01초</span><span class="h-value green">+10P (PERFECT)</span></div>
-        <div class="help-row"><span class="h-label">오차 ±0.05초</span><span class="h-value blue">+5P (GREAT)</span></div>
-        <div class="help-row"><span class="h-label">오차 ±0.1초</span><span class="h-value gold">+2P (GOOD)</span></div>
-        <div class="help-row"><span class="h-label">오차 ±0.1초+</span><span class="h-value">+1P (MISS)</span></div>
-        <div class="help-note">3라운드 합산 포인트를 받아요!</div>
+        <h3>👁 타이머 사라짐</h3>
+        <div class="help-row"><span class="h-label">목표 2.5초 전</span><span class="h-value">서서히 투명해짐</span></div>
+        <div class="help-row"><span class="h-label">목표 1초 전</span><span class="h-value red">완전히 사라짐!</span></div>
+        <div class="help-note">마지막은 감으로 맞춰야 해요!</div>
+      </div>
+      <div class="help-section">
+        <h3>🎯 포인트 기준</h3>
+        <div class="help-row"><span class="h-label">±0.01초</span><span class="h-value green">PERFECT (10P / 30P)</span></div>
+        <div class="help-row"><span class="h-label">±0.05초</span><span class="h-value blue">GREAT (5P / 15P)</span></div>
+        <div class="help-row"><span class="h-label">±0.1초</span><span class="h-value gold">GOOD (2P / 6P)</span></div>
+        <div class="help-row"><span class="h-label">±0.1초+</span><span class="h-value">MISS (1P / 3P)</span></div>
       </div>
       <div class="help-section">
         <h3>🔗 추가 기회</h3>
-        <div class="help-row"><span class="h-label">친구에게 공유</span><span class="h-value blue">+1회 (무제한)</span></div>
+        <div class="help-row"><span class="h-label">공유</span><span class="h-value blue">+1회 (무제한)</span></div>
         <div class="help-row"><span class="h-label">광고 시청</span><span class="h-value blue">+1회 (무제한)</span></div>
       </div>
       <div class="help-section">
-        <h3>💱 토스포인트 변환</h3>
-        <div class="help-row"><span class="h-label">최소 변환</span><span class="h-value">10P 이상</span></div>
-        <div class="help-row"><span class="h-label">변환 비율</span><span class="h-value blue">1P = 1 토스포인트</span></div>
+        <h3>💱 토스포인트</h3>
+        <div class="help-row"><span class="h-label">최소</span><span class="h-value">10P 이상</span></div>
+        <div class="help-row"><span class="h-label">비율</span><span class="h-value blue">1P = 1 토스포인트</span></div>
       </div>
     </div>
   </div>
@@ -329,33 +309,25 @@ body{-webkit-text-size-adjust:100%}
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== 라운드 목표 시간 생성 =====
-// 3~10초 사이 랜덤, 소수점 1자리 (예: 5.0, 7.7, 3.4)
-function generateTargets(){
-  const targets=[];
-  const pool=[3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,7.7,8.0,8.5,9.0,9.5,10.0];
-  for(let i=0;i<3;i++){
-    targets.push(pool[Math.floor(Math.random()*pool.length)]);
-  }
-  return targets;
-}
+// ===== 모드 설정 =====
+const MODES={
+  normal:{target:5.0, cost:1, multi:1, label:'5.0초'},
+  hard:{target:7.7, cost:3, multi:3, label:'7.7초'}
+};
+let currentMode='normal';
 
-// ===== 포인트 계산 =====
-function calcReward(diff){
-  if(diff<=0.01)return{points:10,grade:'PERFECT',cls:'perfect',color:'var(--green)'};
-  if(diff<=0.05)return{points:5,grade:'GREAT!',cls:'great',color:'var(--blue)'};
-  if(diff<=0.1)return{points:2,grade:'GOOD',cls:'good',color:'var(--gold)'};
-  return{points:1,grade:'MISS',cls:'miss',color:'var(--red)'};
+// ===== 포인트 =====
+function calcReward(diff,multi){
+  if(diff<=0.01)return{points:10*multi,grade:'PERFECT',cls:'perfect',color:'var(--green)'};
+  if(diff<=0.05)return{points:5*multi,grade:'GREAT!',cls:'great',color:'var(--blue)'};
+  if(diff<=0.1)return{points:2*multi,grade:'GOOD',cls:'good',color:'var(--gold)'};
+  return{points:1*multi,grade:'MISS',cls:'miss',color:'var(--red)'};
 }
 
 // ===== 상태 =====
-const STATE_KEY='timer_game_v1';
+const STATE_KEY='timer_game_v2';
 let state=loadState();
-
-function defaultState(){
-  return{points:0,bestRoundScore:0,bestScore:0,totalPlays:0,
-    todayPlayed:0,todayBonusShare:0,todayBonusAd:0,lastPlayDate:null,totalWithdrawn:0};
-}
+function defaultState(){return{points:0,bestScore:0,totalPlays:0,todayPlayed:0,todayBonusShare:0,todayBonusAd:0,lastPlayDate:null,totalWithdrawn:0};}
 function loadState(){try{const s=localStorage.getItem(STATE_KEY);if(s)return{...defaultState(),...JSON.parse(s)};}catch(e){}return defaultState();}
 function saveState(){localStorage.setItem(STATE_KEY,JSON.stringify(state));}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
@@ -363,54 +335,23 @@ function resetDaily(){if(state.lastPlayDate!==todayStr()){state.todayPlayed=0;st
 function getMaxPlays(){return 3+state.todayBonusShare+state.todayBonusAd;}
 function getRemaining(){return Math.max(0,getMaxPlays()-state.todayPlayed);}
 
-// ===== 게임 변수 =====
-let targets=[];
-let roundResults=[];
-let currentRound=0;
-let gameState='idle';
-let startTime=0;
-let timerInterval=null;
-let fadeStarted=false;
-
 // ===== UI =====
 function updateUI(){
   resetDaily();
   document.getElementById('amountNum').textContent=state.points.toLocaleString();
-
   const bestBadge=document.getElementById('bestBadge');
-  if(state.bestRoundScore>0){
-    bestBadge.classList.remove('hidden');
-    document.getElementById('bestText').textContent=`최고 ${state.bestRoundScore}P`;
-  }else bestBadge.classList.add('hidden');
-
+  if(state.bestScore>0){bestBadge.classList.remove('hidden');document.getElementById('bestText').textContent=`최고 ${state.bestScore}P`;}
+  else bestBadge.classList.add('hidden');
   const remaining=getRemaining();
   document.getElementById('flipsText').textContent=`오늘 ${remaining}회 남음`;
-
-  const btn=document.getElementById('btnStart');
-  btn.disabled=remaining<=0;
-  btn.classList.toggle('no-flips',remaining<=0);
-  btn.textContent=remaining>0?`⏱ 3라운드 도전 (${remaining}회)`:'⏱ 오늘 기회 소진';
-
   document.getElementById('btnWithdraw').disabled=state.points<10;
 
-  // 라운드 미리보기 생성
-  targets=generateTargets();
-  renderRoundsPreview();
-
-  // 타이머 링
-  const ring=document.getElementById('timerRing');
-  if(state.bestRoundScore>0){
-    const pct=Math.min(100,state.bestRoundScore/30*100);
-    ring.style.strokeDashoffset=327-(327*pct/100);
-    if(pct>=80)ring.classList.add('green');else ring.classList.remove('green');
-  }
-}
-
-function renderRoundsPreview(){
-  const inner=document.getElementById('roundsInner');
-  inner.innerHTML=targets.map((t,i)=>
-    `<div class="round-card"><div class="r-num">R${i+1}</div><div class="r-time">${t.toFixed(1)}</div><div class="r-unit">초</div></div>`
-  ).join('');
+  // 모드 카드 활성/비활성
+  document.querySelectorAll('.mode-card').forEach(c=>{
+    const cost=c.classList.contains('hard')?3:1;
+    c.style.opacity=remaining>=cost?'1':'0.4';
+    c.style.pointerEvents=remaining>=cost?'auto':'none';
+  });
 }
 
 function showScreen(id){
@@ -420,25 +361,24 @@ function showScreen(id){
 }
 
 // ===== 게임 =====
-function startGame(){
+let gameState='idle';
+let startTime=0;
+let timerInterval=null;
+
+function startGame(mode){
   resetDaily();
-  if(getRemaining()<=0)return;
+  const m=MODES[mode];
+  if(getRemaining()<m.cost){showToast(`기회가 ${m.cost}회 필요해요!`);return;}
+  currentMode=mode;
 
-  targets=generateTargets();
-  roundResults=[];
-  currentRound=0;
   showScreen('gameScreen');
-  document.getElementById('finalResult').classList.remove('show');
-  startRound();
-}
-
-function startRound(){
   gameState='idle';
-  fadeStarted=false;
-  const t=targets[currentRound];
 
-  document.getElementById('gameRoundInfo').textContent=`라운드 ${currentRound+1}/3`;
-  document.getElementById('gameTarget').textContent=t.toFixed(1);
+  const highlight=document.getElementById('gameHighlight');
+  highlight.textContent=m.label;
+  highlight.className='highlight'+(mode==='hard'?' gold':'');
+
+  document.getElementById('gameHint').textContent=mode==='hard'?'🔥 3회 차감 | 보상 x3':'';
   document.getElementById('gameSub').textContent='원을 터치해서 시작';
 
   const zone=document.getElementById('tapZone');
@@ -446,54 +386,57 @@ function startRound(){
   document.getElementById('tapText').textContent='터치';
   document.getElementById('tapText').style.opacity='1';
   document.getElementById('tapSub').textContent='START';
-
-  document.getElementById('roundResult').classList.remove('show');
+  document.getElementById('result').classList.remove('show');
 
   if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
 }
 
 function handleTap(){
   if(gameState==='idle'){
-    // 시작
     gameState='timing';
     startTime=performance.now();
-    fadeStarted=false;
-    const target=targets[currentRound];
+    const m=MODES[currentMode];
 
     const zone=document.getElementById('tapZone');
-    zone.className='tap-zone timing';
+    zone.className='tap-zone timing'+(currentMode==='hard'?' gold-mode':'');
     document.getElementById('tapSub').textContent='';
-    document.getElementById('gameSub').textContent=`${target.toFixed(1)}초에 맞춰 터치!`;
+    document.getElementById('gameSub').textContent=`${m.target.toFixed(1)}초에 맞춰 터치!`;
 
     timerInterval=setInterval(()=>{
       const elapsed=(performance.now()-startTime)/1000;
       const tapText=document.getElementById('tapText');
       tapText.textContent=elapsed.toFixed(3);
 
-      // 목표 시간 2.5초 전부터 서서히 투명해짐
-      const fadeStart=target-2.5;
-      if(elapsed>=fadeStart && elapsed<target){
-        const fadeProgress=(elapsed-fadeStart)/2.5; // 0~1
-        tapText.style.opacity=Math.max(0,1-fadeProgress).toFixed(2);
-      }else if(elapsed>=target){
+      // 투명화: 목표 2.5초 전부터 시작, 1초 전에 완전 투명
+      const fadeStart=m.target-2.5;
+      const fadeEnd=m.target-1.0;
+      if(elapsed>=fadeStart && elapsed<fadeEnd){
+        // 2.5초~1초 전: 서서히 사라짐 (1 → 0)
+        const progress=(elapsed-fadeStart)/(fadeEnd-fadeStart);
+        tapText.style.opacity=Math.max(0,(1-progress)).toFixed(2);
+      }else if(elapsed>=fadeEnd){
+        // 1초 전: 완전 투명
         tapText.style.opacity='0';
       }
     },16);
 
   }else if(gameState==='timing'){
-    // 정지
     const elapsed=(performance.now()-startTime)/1000;
     gameState='idle';
     if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
 
-    const target=targets[currentRound];
-    const diff=Math.abs(elapsed-target);
-    const reward=calcReward(diff);
+    const m=MODES[currentMode];
+    const diff=Math.abs(elapsed-m.target);
+    const reward=calcReward(diff,m.multi);
 
-    // 결과 저장
-    roundResults.push({target,elapsed,diff,reward});
+    // 차감
+    state.todayPlayed+=m.cost;
+    state.totalPlays++;
+    state.points+=reward.points;
+    if(state.points>state.bestScore)state.bestScore=state.points;
+    saveState();
 
-    // 탭 존 표시
+    // 탭 존
     const zone=document.getElementById('tapZone');
     zone.className='tap-zone done';
     const tapText=document.getElementById('tapText');
@@ -501,113 +444,43 @@ function handleTap(){
     tapText.textContent=elapsed.toFixed(3);
     document.getElementById('tapSub').textContent='초';
 
-    // 라운드 결과 표시
-    document.getElementById('rrTime').textContent=elapsed.toFixed(3)+'s';
-    document.getElementById('rrTime').style.color=reward.color;
-    document.getElementById('rrGrade').textContent=reward.grade;
-    document.getElementById('rrGrade').style.color=reward.color;
-    document.getElementById('rrPoints').textContent=`+${reward.points}P`;
-    document.getElementById('roundResult').classList.add('show');
+    // 결과
+    document.getElementById('resultTime').textContent=elapsed.toFixed(3)+'s';
+    document.getElementById('resultTime').className='result-time '+reward.cls;
+    document.getElementById('resultGrade').textContent=reward.grade;
+    document.getElementById('resultGrade').style.color=reward.color;
+    document.getElementById('resultPoints').textContent=`+${reward.points}P`;
+    document.getElementById('resultDetail').textContent=`오차: ${diff.toFixed(3)}초 | 현재 ${state.points}P`;
 
-    // 다음 라운드 또는 최종
-    currentRound++;
-    if(currentRound<3){
-      setTimeout(()=>startRound(),1500);
-    }else{
-      setTimeout(()=>showFinalResult(),1500);
-    }
+    // 재도전 버튼 표시
+    const remaining=getRemaining();
+    document.getElementById('btnRetryNormal').style.display=remaining>=1?'':'none';
+    document.getElementById('btnRetryHard').style.display=remaining>=3?'':'none';
+
+    setTimeout(()=>document.getElementById('result').classList.add('show'),200);
   }
 }
 
-function showFinalResult(){
-  const totalPoints=roundResults.reduce((s,r)=>s+r.reward.points,0);
-
-  state.todayPlayed++;
-  state.totalPlays++;
-  state.points+=totalPoints;
-  if(totalPoints>state.bestRoundScore)state.bestRoundScore=totalPoints;
-  if(state.points>state.bestScore)state.bestScore=state.points;
-  saveState();
-
-  // 최종 결과 표시
-  document.getElementById('frTotal').textContent=`+${totalPoints}P`;
-  document.getElementById('frDetail').textContent=`현재 ${state.points}P`;
-
-  const frRounds=document.getElementById('frRounds');
-  frRounds.innerHTML=roundResults.map((r,i)=>
-    `<div class="fr-round">
-      <div class="frr-target">목표 ${r.target.toFixed(1)}s</div>
-      <div class="frr-time" style="color:${r.reward.color}">${r.elapsed.toFixed(3)}s</div>
-      <div class="frr-grade" style="color:${r.reward.color}">${r.reward.grade} +${r.reward.points}P</div>
-    </div>`
-  ).join('');
-
-  document.getElementById('roundResult').classList.remove('show');
-
-  // 탭존 숨기기
-  document.getElementById('tapZone').style.display='none';
-  document.getElementById('gameSub').textContent='';
-  document.getElementById('gameRoundInfo').textContent='결과';
-  document.getElementById('gameTarget').textContent='';
-  document.querySelector('.game-instruction').innerHTML='<span class="highlight">3라운드 완료!</span>';
-
-  const remaining=getRemaining();
-  const btnRetry=document.getElementById('btnRetry');
-  btnRetry.style.display=remaining>0?'':'none';
-  btnRetry.textContent=`⏱ 다시 도전! (${remaining}회 남음)`;
-
-  setTimeout(()=>document.getElementById('finalResult').classList.add('show'),200);
-}
-
-function backToMain(){
-  document.getElementById('tapZone').style.display='';
-  showScreen('mainScreen');updateUI();
-}
+function backToMain(){showScreen('mainScreen');updateUI();}
 
 // ===== 공유/광고/변환/랭킹 =====
 function doShare(){
   resetDaily();
-  const msg=`타이머 맞추기에서 ${state.bestRoundScore}P 기록! 너도 해봐!`;
-  if(navigator.share){
-    navigator.share({title:'타이머를 맞춰라',text:msg,url:location.href}).then(()=>{
-      state.todayBonusShare++;saveState();updateUI();showToast('공유 완료! +1회 획득');
-    }).catch(()=>{});
-  }else{
-    navigator.clipboard.writeText(msg).then(()=>{
-      state.todayBonusShare++;saveState();updateUI();showToast('링크 복사됨! +1회 획득');
-    }).catch(()=>{state.todayBonusShare++;saveState();updateUI();showToast('공유 완료! +1회 획득');});
-  }
+  const msg=`타이머 맞추기에서 ${state.bestScore}P 달성! 너도 해봐!`;
+  if(navigator.share){navigator.share({title:'타이머를 맞춰라',text:msg,url:location.href}).then(()=>{state.todayBonusShare++;saveState();updateUI();showToast('공유 완료! +1회 획득');}).catch(()=>{});}
+  else{navigator.clipboard.writeText(msg).then(()=>{state.todayBonusShare++;saveState();updateUI();showToast('링크 복사됨! +1회 획득');}).catch(()=>{state.todayBonusShare++;saveState();updateUI();showToast('공유 완료!');});}
 }
-
-function watchAd(){
-  resetDaily();
-  const btn=document.getElementById('btnAd');
-  btn.disabled=true;btn.textContent='📺 광고 로딩...';
-  setTimeout(()=>{state.todayBonusAd++;saveState();updateUI();showToast('광고 시청 완료! +1회 획득');},800);
-}
-
-function showWithdraw(){
-  if(state.points<10)return;
-  document.getElementById('withdrawAmount').textContent=state.points+' P';
-  document.getElementById('withdrawToss').textContent=state.points;
-  showScreen('withdrawScreen');
-}
+function watchAd(){resetDaily();const btn=document.getElementById('btnAd');btn.disabled=true;btn.textContent='📺 로딩...';setTimeout(()=>{state.todayBonusAd++;saveState();updateUI();showToast('광고 완료! +1회 획득');},800);}
+function showWithdraw(){if(state.points<10)return;document.getElementById('withdrawAmount').textContent=state.points+' P';document.getElementById('withdrawToss').textContent=state.points;showScreen('withdrawScreen');}
 function hideWithdraw(){showScreen('mainScreen');}
-function doWithdraw(){
-  const amount=state.points;state.totalWithdrawn+=amount;state.points=0;saveState();
-  document.getElementById('withdrawSuccessDetail').textContent=amount+' 토스포인트가 지급되었어요';
-  document.getElementById('withdrawSuccess').classList.add('show');
-  showScreen('mainScreen');updateUI();
-}
+function doWithdraw(){const a=state.points;state.totalWithdrawn+=a;state.points=0;saveState();document.getElementById('withdrawSuccessDetail').textContent=a+' 토스포인트가 지급되었어요';document.getElementById('withdrawSuccess').classList.add('show');showScreen('mainScreen');updateUI();}
 function closeWithdrawSuccess(){document.getElementById('withdrawSuccess').classList.remove('show');}
-function openLeaderboard(){showToast(`🏆 최고기록 ${state.bestRoundScore}P | 총 ${state.bestScore}P`);}
+function openLeaderboard(){showToast(`🏆 최고기록 ${state.bestScore}P`);}
 function toggleHelp(){document.getElementById('helpOverlay').classList.toggle('show');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
-
-resetDaily();
-updateUI();
+resetDaily();updateUI();
 </script>
 </body>
 </html>
